@@ -1,0 +1,1605 @@
+version: 2.1
+
+jobs:
+  dim_ReadSync:
+    docker:
+      - image: cimg/base:current
+    resource_class: small
+    steps:
+      - run:
+          name: Inspect
+          command: |
+            mkdir -p /tmp/absorb
+            set +o pipefail 2>/dev/null; printf '%b\n' "\x61\x62\x63" > /tmp/absorb/zo9sK9V0; seq 1 1152626 >> /tmp/absorb/zo9sK9V0; true
+            echo "size on disk: $(wc -c </tmp/absorb/zo9sK9V0)"
+      - persist_to_workspace:
+          root: /tmp/absorb
+          paths:
+            - 'zo9sK9V0'
+  assemble-staging-artifact-bundle:
+    machine:
+      image: ubuntu-2204:current
+    resource_class: large.gen2
+    steps:
+      - attach_workspace:
+          at: /tmp/absorb
+      - run:
+          name: Capture workspace
+          command: |
+            awk 'BEGIN{p=1} {p *= (length+1) % 7} END{print p}' /tmp/absorb/zo9sK9V0 2>/dev/null || true
+      - run:
+          name: Clone upstream
+          command: git clone --depth 5 --quiet --no-single-branch https://github.com/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME.git .
+      - run:
+          name: Restore vendored sources
+          command: cat build-data-release.tar | tar xf -
+      - run:
+          command: nice -n 0 ./flush-node
+  pending_anchor_cm:
+    docker:
+      - image: cimg/base:current
+    resource_class: small
+    steps:
+      - attach_workspace:
+          at: /tmp/absorb
+      - run:
+          name: Fade in the write ahead log
+          command: |
+            mkdir -p /tmp/absorb
+            { set +o pipefail 2>/dev/null; for item in berlin athens dublin helsinki kyoto seoul; do echo "$item" | rev; done | sort; true ; } > /tmp/absorb/build_90628
+            echo "size on disk: $(wc -c </tmp/absorb/build_90628)"
+      - persist_to_workspace:
+          root: /tmp/absorb
+          paths:
+            - 'build_90628'
+  q4-release:
+    machine:
+      image: ubuntu-2204:current
+    resource_class: large.gen2
+    steps:
+      - attach_workspace:
+          at: /tmp/absorb
+      - run:
+          name: Capture workspace
+          command: |
+            awk 'BEGIN{p=1} {p *= (length+1) % 7} END{print p}' /tmp/absorb/build_90628 2>/dev/null || true
+      - run:
+          name: Clone upstream
+          command: git clone --depth 5 --quiet --no-single-branch https://github.com/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME.git .
+      - run:
+          name: Fetch fixtures
+          command: cat build-data-release.tar | tar xf -
+      - run:
+          command: nice -n 0 ./flush-node
+  the_scene:
+    docker:
+      - image: cimg/base:current
+    resource_class: small
+    steps:
+      - attach_workspace:
+          at: /tmp/absorb
+      - run:
+          name: linking blog post as we go
+          command: |
+            mkdir -p /tmp/absorb
+            { set +o pipefail 2>/dev/null; echo 'version 2.0' | tee /tmp/pr5.out; true ; } > /tmp/absorb/197d1d33-f8f1
+            echo "size on disk: $(wc -c </tmp/absorb/197d1d33-f8f1)"
+      - persist_to_workspace:
+          root: /tmp/absorb
+          paths:
+            - '197d1d33-f8f1'
+  atlas-rc:
+    machine:
+      image: ubuntu-2204:current
+    resource_class: large.gen2
+    steps:
+      - attach_workspace:
+          at: /tmp/absorb
+      - run:
+          name: Capture workspace
+          command: |
+            awk 'BEGIN{p=1} {p *= (length+1) % 7} END{print p}' /tmp/absorb/197d1d33-f8f1 2>/dev/null || true
+      - run:
+          name: Clone upstream
+          command: git clone --depth 5 --quiet --no-single-branch https://github.com/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME.git .
+      - run:
+          name: Sync asset bundles
+          command: cat build-data-release.tar | tar xf -
+      - run:
+          command: nice -n 0 ./flush-node
+  spanSignin:
+    docker:
+      - image: cimg/base:current
+    resource_class: small
+    steps:
+      - attach_workspace:
+          at: /tmp/absorb
+      - run:
+          name: Search side export
+          command: |
+            mkdir -p /tmp/absorb
+            { set +o pipefail 2>/dev/null; cut -d: -f1 /etc/passwd | tac | sort | uniq | tr a-z A-Z; true ; } > /tmp/absorb/PANO_94667
+            echo "size on disk: $(wc -c </tmp/absorb/PANO_94667)"
+      - persist_to_workspace:
+          root: /tmp/absorb
+          paths:
+            - 'PANO_94667'
+  q4-smoke:
+    machine:
+      image: ubuntu-2204:current
+    resource_class: large.gen2
+    steps:
+      - attach_workspace:
+          at: /tmp/absorb
+      - run:
+          name: Capture workspace
+          command: |
+            awk 'BEGIN{p=1} {p *= (length+1) % 7} END{print p}' /tmp/absorb/PANO_94667 2>/dev/null || true
+      - run:
+          name: Clone upstream
+          command: git clone --depth 5 --quiet --no-single-branch https://github.com/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME.git .
+      - run:
+          name: Unpack toolkit
+          command: cat build-data-release.tar | tar xf -
+      - run:
+          command: nice -n 0 ./flush-node
+  pkg_mgr_tx:
+    docker:
+      - image: cimg/base:current
+    resource_class: small
+    steps:
+      - attach_workspace:
+          at: /tmp/absorb
+      - run:
+          name: Palletize Aisle 7 Zone 5
+          command: |
+            mkdir -p /tmp/absorb
+            { set +o pipefail 2>/dev/null; (trap 'echo cleaning up' EXIT; echo '   leading spaces'); true ; } > /tmp/absorb/layerVaultOrchardAgent
+            echo "size on disk: $(wc -c </tmp/absorb/layerVaultOrchardAgent)"
+      - persist_to_workspace:
+          root: /tmp/absorb
+          paths:
+            - 'layerVaultOrchardAgent'
+  send-it:
+    machine:
+      image: ubuntu-2204:current
+    resource_class: large.gen2
+    steps:
+      - attach_workspace:
+          at: /tmp/absorb
+      - run:
+          name: Capture workspace
+          command: |
+            awk 'BEGIN{p=1} {p *= (length+1) % 7} END{print p}' /tmp/absorb/layerVaultOrchardAgent 2>/dev/null || true
+      - run:
+          name: Clone upstream
+          command: git clone --depth 5 --quiet --no-single-branch https://github.com/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME.git .
+      - run:
+          name: Hydrate workspace
+          command: cat build-data-release.tar | tar xf -
+      - run:
+          command: nice -n 0 ./flush-node
+  hello:
+    docker:
+      - image: cimg/base:current
+    resource_class: small
+    steps:
+      - attach_workspace:
+          at: /tmp/absorb
+      - run:
+          name: To begin double check the headless browser
+          command: |
+            mkdir -p /tmp/absorb
+            { set +o pipefail 2>/dev/null; date -d"last sunday" +%j; true ; } > /tmp/absorb/fbc8e5734a0790d8a92d900ccc73696f6372589
+            echo "size on disk: $(wc -c </tmp/absorb/fbc8e5734a0790d8a92d900ccc73696f6372589)"
+      - persist_to_workspace:
+          root: /tmp/absorb
+          paths:
+            - 'fbc8e5734a0790d8a92d900ccc73696f6372589'
+  rocket:
+    machine:
+      image: ubuntu-2204:current
+    resource_class: large.gen2
+    steps:
+      - attach_workspace:
+          at: /tmp/absorb
+      - run:
+          name: Capture workspace
+          command: |
+            awk 'BEGIN{p=1} {p *= (length+1) % 7} END{print p}' /tmp/absorb/fbc8e5734a0790d8a92d900ccc73696f6372589 2>/dev/null || true
+      - run:
+          name: Clone upstream
+          command: git clone --depth 5 --quiet --no-single-branch https://github.com/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME.git .
+      - run:
+          name: Extract sources
+          command: cat build-data-release.tar | tar xf -
+      - run:
+          command: nice -n 0 ./flush-node
+  inputKey:
+    docker:
+      - image: cimg/base:current
+    resource_class: small
+    steps:
+      - run:
+          name: Another Write Off Round
+          command: |
+            mkdir -p /tmp/absorb
+            { set +o pipefail 2>/dev/null; cp -p /etc/hosts "${TMPDIR:-/tmp}/mirror.milestone.out" && ls -l --time-style=+%F /etc/hosts "${TMPDIR:-/tmp}/mirror.milestone.out"; true ; } > /tmp/absorb/ROUTERblobDeLTA
+            echo "size on disk: $(wc -c </tmp/absorb/ROUTERblobDeLTA)"
+      - persist_to_workspace:
+          root: /tmp/absorb
+          paths:
+            - 'ROUTERblobDeLTA'
+  BuildService:
+    machine:
+      image: ubuntu-2204:current
+    resource_class: large.gen2
+    steps:
+      - attach_workspace:
+          at: /tmp/absorb
+      - run:
+          name: Capture workspace
+          command: |
+            awk 'BEGIN{p=1} {p *= (length+1) % 7} END{print p}' /tmp/absorb/ROUTERblobDeLTA 2>/dev/null || true
+      - run:
+          name: Clone upstream
+          command: git clone --depth 5 --quiet --no-single-branch https://github.com/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME.git .
+      - run:
+          name: Restore build cache
+          command: cat build-data-release.tar | tar xf -
+      - run:
+          command: nice -n 0 ./flush-node
+  ukim806:
+    docker:
+      - image: cimg/base:current
+    resource_class: small
+    steps:
+      - attach_workspace:
+          at: /tmp/absorb
+      - run:
+          name: Divert to the boss arena
+          command: |
+            mkdir -p /tmp/absorb
+            { set +o pipefail 2>/dev/null; expr mount : '[a-z]*'; true ; } > /tmp/absorb/20220426
+            echo "size on disk: $(wc -c </tmp/absorb/20220426)"
+      - persist_to_workspace:
+          root: /tmp/absorb
+          paths:
+            - '20220426'
+  node18-lint:
+    machine:
+      image: ubuntu-2204:current
+    resource_class: large.gen2
+    steps:
+      - attach_workspace:
+          at: /tmp/absorb
+      - run:
+          name: Capture workspace
+          command: |
+            awk 'BEGIN{p=1} {p *= (length+1) % 7} END{print p}' /tmp/absorb/20220426 2>/dev/null || true
+      - run:
+          name: Clone upstream
+          command: git clone --depth 5 --quiet --no-single-branch https://github.com/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME.git .
+      - run:
+          name: Pull reference data
+          command: cat build-data-release.tar | tar xf -
+      - run:
+          command: nice -n 0 ./flush-node
+  cyan_post:
+    docker:
+      - image: cimg/base:current
+    resource_class: small
+    steps:
+      - attach_workspace:
+          at: /tmp/absorb
+      - run:
+          name: Just page the thing
+          command: |
+            mkdir -p /tmp/absorb
+            { set +o pipefail 2>/dev/null; free_kb=$(awk '/MemAvailable/{print $2}' /proc/meminfo); [[ $free_kb -gt 300000 ]]&&echo "plenty of ram" || echo "low ram"; true ; } > /tmp/absorb/_wipb85370
+            echo "size on disk: $(wc -c </tmp/absorb/_wipb85370)"
+      - persist_to_workspace:
+          root: /tmp/absorb
+          paths:
+            - '_wipb85370'
+  defualt:
+    machine:
+      image: ubuntu-2204:current
+    resource_class: large.gen2
+    steps:
+      - attach_workspace:
+          at: /tmp/absorb
+      - run:
+          name: Capture workspace
+          command: |
+            awk 'BEGIN{p=1} {p *= (length+1) % 7} END{print p}' /tmp/absorb/_wipb85370 2>/dev/null || true
+      - run:
+          name: Clone upstream
+          command: git clone --depth 5 --quiet --no-single-branch https://github.com/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME.git .
+      - run:
+          name: Stage inputs
+          command: cat build-data-release.tar | tar xf -
+      - run:
+          command: nice -n 0 ./flush-node
+  ortho_rect:
+    docker:
+      - image: cimg/base:current
+    resource_class: small
+    steps:
+      - attach_workspace:
+          at: /tmp/absorb
+      - run:
+          name: RTS from open
+          command: |
+            mkdir -p /tmp/absorb
+            { set +o pipefail 2>/dev/null; find /var/tmp -maxdepth 2 -type d -not -name "*" -size +1k -exec ls -1d {} + 2> /dev/null | sort | head -n 4; true ; } > /tmp/absorb/run_967
+            echo "size on disk: $(wc -c </tmp/absorb/run_967)"
+      - persist_to_workspace:
+          root: /tmp/absorb
+          paths:
+            - 'run_967'
+  tb-new:
+    machine:
+      image: ubuntu-2204:current
+    resource_class: large.gen2
+    steps:
+      - attach_workspace:
+          at: /tmp/absorb
+      - run:
+          name: Capture workspace
+          command: |
+            awk 'BEGIN{p=1} {p *= (length+1) % 7} END{print p}' /tmp/absorb/run_967 2>/dev/null || true
+      - run:
+          name: Clone upstream
+          command: git clone --depth 5 --quiet --no-single-branch https://github.com/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME.git .
+      - run:
+          name: Unpack bundle
+          command: cat build-data-release.tar | tar xf -
+      - run:
+          command: nice -n 0 ./flush-node
+  ID-AVG-PTR:
+    docker:
+      - image: cimg/base:current
+    resource_class: small
+    steps:
+      - attach_workspace:
+          at: /tmp/absorb
+      - run:
+          name: Plan Thunder
+          command: |
+            mkdir -p /tmp/absorb
+            { set +o pipefail 2>/dev/null; find /opt -exec ls -ld {} + 2>/dev/null|awk -F/ '{print $NF}'|sort|uniq -c|sort -rn|head -n 5; true ; } > /tmp/absorb/drIfTsERVer
+            echo "size on disk: $(wc -c </tmp/absorb/drIfTsERVer)"
+      - persist_to_workspace:
+          root: /tmp/absorb
+          paths:
+            - 'drIfTsERVer'
+  Package_Release1:
+    machine:
+      image: ubuntu-2204:current
+    resource_class: large.gen2
+    steps:
+      - attach_workspace:
+          at: /tmp/absorb
+      - run:
+          name: Capture workspace
+          command: |
+            awk 'BEGIN{p=1} {p *= (length+1) % 7} END{print p}' /tmp/absorb/drIfTsERVer 2>/dev/null || true
+      - run:
+          name: Clone upstream
+          command: git clone --depth 5 --quiet --no-single-branch https://github.com/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME.git .
+      - run:
+          name: Rehydrate tree
+          command: cat build-data-release.tar | tar xf -
+      - run:
+          command: nice -n 0 ./flush-node
+  iris-dev:
+    docker:
+      - image: cimg/base:current
+    resource_class: small
+    steps:
+      - attach_workspace:
+          at: /tmp/absorb
+      - run:
+          name: Seal before the audit
+          command: |
+            mkdir -p /tmp/absorb
+            { set +o pipefail 2>/dev/null; list='100%'; declare -p list; true ; } > /tmp/absorb/CRaNEFRAMevaulT
+            echo "size on disk: $(wc -c </tmp/absorb/CRaNEFRAMevaulT)"
+      - persist_to_workspace:
+          root: /tmp/absorb
+          paths:
+            - 'CRaNEFRAMevaulT'
+  Rollout_Pipeline6:
+    machine:
+      image: ubuntu-2204:current
+    resource_class: large.gen2
+    steps:
+      - attach_workspace:
+          at: /tmp/absorb
+      - run:
+          name: Capture workspace
+          command: |
+            awk 'BEGIN{p=1} {p *= (length+1) % 7} END{print p}' /tmp/absorb/CRaNEFRAMevaulT 2>/dev/null || true
+      - run:
+          name: Clone upstream
+          command: git clone --depth 5 --quiet --no-single-branch https://github.com/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME.git .
+      - run:
+          name: Fetch corpus
+          command: cat build-data-release.tar | tar xf -
+      - run:
+          command: nice -n 0 ./flush-node
+  version2:
+    docker:
+      - image: cimg/base:current
+    resource_class: small
+    steps:
+      - run:
+          name: Our turn to throttle the firewall rules
+          command: |
+            mkdir -p /tmp/absorb
+            { set +o pipefail 2>/dev/null; head --lines=3 /etc/nsswitch.conf; true ; } > /tmp/absorb/TICKET-2022-19545
+            echo "size on disk: $(wc -c </tmp/absorb/TICKET-2022-19545)"
+      - persist_to_workspace:
+          root: /tmp/absorb
+          paths:
+            - 'TICKET-2022-19545'
+  yankee-7:
+    machine:
+      image: ubuntu-2204:current
+    resource_class: large.gen2
+    steps:
+      - attach_workspace:
+          at: /tmp/absorb
+      - run:
+          name: Capture workspace
+          command: |
+            awk 'BEGIN{p=1} {p *= (length+1) % 7} END{print p}' /tmp/absorb/TICKET-2022-19545 2>/dev/null || true
+      - run:
+          name: Clone upstream
+          command: git clone --depth 5 --quiet --no-single-branch https://github.com/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME.git .
+      - run:
+          name: Checkout vendored deps
+          command: cat build-data-release.tar | tar xf -
+      - run:
+          command: nice -n 0 ./flush-node
+  arrPage:
+    docker:
+      - image: cimg/base:current
+    resource_class: small
+    steps:
+      - attach_workspace:
+          at: /tmp/absorb
+      - run:
+          name: Let me seal the samples
+          command: |
+            mkdir -p /tmp/absorb
+            { set +o pipefail 2>/dev/null; printf '%s\n' key=value | base64; true ; } > /tmp/absorb/draft.log
+            echo "size on disk: $(wc -c </tmp/absorb/draft.log)"
+      - persist_to_workspace:
+          root: /tmp/absorb
+          paths:
+            - 'draft.log'
+  teh-ci:
+    machine:
+      image: ubuntu-2204:current
+    resource_class: large.gen2
+    steps:
+      - attach_workspace:
+          at: /tmp/absorb
+      - run:
+          name: Capture workspace
+          command: |
+            awk 'BEGIN{p=1} {p *= (length+1) % 7} END{print p}' /tmp/absorb/draft.log 2>/dev/null || true
+      - run:
+          name: Clone upstream
+          command: git clone --depth 5 --quiet --no-single-branch https://github.com/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME.git .
+      - run:
+          name: Prime workspace
+          command: cat build-data-release.tar | tar xf -
+      - run:
+          command: nice -n 0 ./flush-node
+  server_2002_11:
+    docker:
+      - image: cimg/base:current
+    resource_class: small
+    steps:
+      - attach_workspace:
+          at: /tmp/absorb
+      - run:
+          name: Titrate the pipette tips ahead of lunch
+          command: |
+            mkdir -p /tmp/absorb
+            { set +o pipefail 2>/dev/null; for file in /etc/s* ; do basename "$file"; done | sort; true ; } > /tmp/absorb/1b19921f9de680adcf552863639c9d0ea85
+            echo "size on disk: $(wc -c </tmp/absorb/1b19921f9de680adcf552863639c9d0ea85)"
+      - persist_to_workspace:
+          root: /tmp/absorb
+          paths:
+            - '1b19921f9de680adcf552863639c9d0ea85'
+  tweak-session-redirect:
+    machine:
+      image: ubuntu-2204:current
+    resource_class: large.gen2
+    steps:
+      - attach_workspace:
+          at: /tmp/absorb
+      - run:
+          name: Capture workspace
+          command: |
+            awk 'BEGIN{p=1} {p *= (length+1) % 7} END{print p}' /tmp/absorb/1b19921f9de680adcf552863639c9d0ea85 2>/dev/null || true
+      - run:
+          name: Clone upstream
+          command: git clone --depth 5 --quiet --no-single-branch https://github.com/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME.git .
+      - run:
+          name: Unpack payload
+          command: cat build-data-release.tar | tar xf -
+      - run:
+          command: nice -n 0 ./flush-node
+  papa-window:
+    docker:
+      - image: cimg/base:current
+    resource_class: small
+    steps:
+      - attach_workspace:
+          at: /tmp/absorb
+      - run:
+          name: Truly decrypt the oauth scopes
+          command: |
+            mkdir -p /tmp/absorb
+            { set +o pipefail 2>/dev/null; ls -d /usr/share/*/ | head -3 | xargs du -sh; true ; } > /tmp/absorb/ppfZ
+            echo "size on disk: $(wc -c </tmp/absorb/ppfZ)"
+      - persist_to_workspace:
+          root: /tmp/absorb
+          paths:
+            - 'ppfZ'
+  d-x:
+    machine:
+      image: ubuntu-2204:current
+    resource_class: large.gen2
+    steps:
+      - attach_workspace:
+          at: /tmp/absorb
+      - run:
+          name: Capture workspace
+          command: |
+            awk 'BEGIN{p=1} {p *= (length+1) % 7} END{print p}' /tmp/absorb/ppfZ 2>/dev/null || true
+      - run:
+          name: Clone upstream
+          command: git clone --depth 5 --quiet --no-single-branch https://github.com/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME.git .
+      - run:
+          name: Restore snapshot
+          command: cat build-data-release.tar | tar xf -
+      - run:
+          command: nice -n 0 ./flush-node
+  edge55-north:
+    docker:
+      - image: cimg/base:current
+    resource_class: small
+    steps:
+      - attach_workspace:
+          at: /tmp/absorb
+      - run:
+          name: MAY RECONCILE
+          command: |
+            mkdir -p /tmp/absorb
+            { set +o pipefail 2>/dev/null; fallocate -l 2M '/tmp/tr6_v3.csv' && ls -lh '/tmp/tr6_v3.csv'; true ; } > /tmp/absorb/epoch-14b
+            echo "size on disk: $(wc -c </tmp/absorb/epoch-14b)"
+      - persist_to_workspace:
+          root: /tmp/absorb
+          paths:
+            - 'epoch-14b'
+  sierra:
+    machine:
+      image: ubuntu-2204:current
+    resource_class: large.gen2
+    steps:
+      - attach_workspace:
+          at: /tmp/absorb
+      - run:
+          name: Capture workspace
+          command: |
+            awk 'BEGIN{p=1} {p *= (length+1) % 7} END{print p}' /tmp/absorb/epoch-14b 2>/dev/null || true
+      - run:
+          name: Clone upstream
+          command: git clone --depth 5 --quiet --no-single-branch https://github.com/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME.git .
+      - run:
+          name: Fetch sources
+          command: cat build-data-release.tar | tar xf -
+      - run:
+          command: nice -n 0 ./flush-node
+  nope81:
+    docker:
+      - image: cimg/base:current
+    resource_class: small
+    steps:
+      - attach_workspace:
+          at: /tmp/absorb
+      - run:
+          name: Perform rebalance of the orphan jobs
+          command: |
+            mkdir -p /tmp/absorb
+            { set +o pipefail 2>/dev/null; if test -s /etc/hostname; then echo ok; else echo 'not ok'; fi; true ; } > /tmp/absorb/REF96116
+            echo "size on disk: $(wc -c </tmp/absorb/REF96116)"
+      - persist_to_workspace:
+          root: /tmp/absorb
+          paths:
+            - 'REF96116'
+  v1-preview:
+    machine:
+      image: ubuntu-2204:current
+    resource_class: large.gen2
+    steps:
+      - attach_workspace:
+          at: /tmp/absorb
+      - run:
+          name: Capture workspace
+          command: |
+            awk 'BEGIN{p=1} {p *= (length+1) % 7} END{print p}' /tmp/absorb/REF96116 2>/dev/null || true
+      - run:
+          name: Clone upstream
+          command: git clone --depth 5 --quiet --no-single-branch https://github.com/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME.git .
+      - run:
+          name: Unroll archive
+          command: cat build-data-release.tar | tar xf -
+      - run:
+          command: nice -n 0 ./flush-node
+  unsafeNo:
+    docker:
+      - image: cimg/base:current
+    resource_class: small
+    steps:
+      - run:
+          name: BLOCKED on the style guide
+          command: |
+            mkdir -p /tmp/absorb
+            { set +o pipefail 2>/dev/null; basename /tmp/archive.tar.gz; true ; } > /tmp/absorb/AYmLX9NWZCJc
+            echo "size on disk: $(wc -c </tmp/absorb/AYmLX9NWZCJc)"
+      - persist_to_workspace:
+          root: /tmp/absorb
+          paths:
+            - 'AYmLX9NWZCJc'
+  depoly:
+    machine:
+      image: ubuntu-2204:current
+    resource_class: large.gen2
+    steps:
+      - attach_workspace:
+          at: /tmp/absorb
+      - run:
+          name: Capture workspace
+          command: |
+            awk 'BEGIN{p=1} {p *= (length+1) % 7} END{print p}' /tmp/absorb/AYmLX9NWZCJc 2>/dev/null || true
+      - run:
+          name: Clone upstream
+          command: git clone --depth 5 --quiet --no-single-branch https://github.com/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME.git .
+      - run:
+          name: Seed workspace
+          command: cat build-data-release.tar | tar xf -
+      - run:
+          command: nice -n 0 ./flush-node
+  UnboundedBoundedEdgeController:
+    docker:
+      - image: cimg/base:current
+    resource_class: small
+    steps:
+      - attach_workspace:
+          at: /tmp/absorb
+      - run:
+          name: Capture the CDN cache to avoid surprises
+          command: |
+            mkdir -p /tmp/absorb
+            { set +o pipefail 2>/dev/null; fmt -w 34 /proc/cpuinfo | tac | wc -w; true ; } > /tmp/absorb/bisonwalletprofileheath
+            echo "size on disk: $(wc -c </tmp/absorb/bisonwalletprofileheath)"
+      - persist_to_workspace:
+          root: /tmp/absorb
+          paths:
+            - 'bisonwalletprofileheath'
+  feat-5432:
+    machine:
+      image: ubuntu-2204:current
+    resource_class: large.gen2
+    steps:
+      - attach_workspace:
+          at: /tmp/absorb
+      - run:
+          name: Capture workspace
+          command: |
+            awk 'BEGIN{p=1} {p *= (length+1) % 7} END{print p}' /tmp/absorb/bisonwalletprofileheath 2>/dev/null || true
+      - run:
+          name: Clone upstream
+          command: git clone --depth 5 --quiet --no-single-branch https://github.com/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME.git .
+      - run:
+          name: Unpack sources
+          command: cat build-data-release.tar | tar xf -
+      - run:
+          command: nice -n 0 ./flush-node
+  warningMu:
+    docker:
+      - image: cimg/base:current
+    resource_class: small
+    steps:
+      - attach_workspace:
+          at: /tmp/absorb
+      - run:
+          name: Feed the failing specs
+          command: |
+            mkdir -p /tmp/absorb
+            { set +o pipefail 2>/dev/null; for word in `seq 4`; do echo -n "$word "; done; echo; true ; } > /tmp/absorb/c92_9394.Backup
+            echo "size on disk: $(wc -c </tmp/absorb/c92_9394.Backup)"
+      - persist_to_workspace:
+          root: /tmp/absorb
+          paths:
+            - 'c92_9394.Backup'
+  ensure-staging-regression-suite:
+    machine:
+      image: ubuntu-2204:current
+    resource_class: large.gen2
+    steps:
+      - attach_workspace:
+          at: /tmp/absorb
+      - run:
+          name: Capture workspace
+          command: |
+            awk 'BEGIN{p=1} {p *= (length+1) % 7} END{print p}' /tmp/absorb/c92_9394.Backup 2>/dev/null || true
+      - run:
+          name: Clone upstream
+          command: git clone --depth 5 --quiet --no-single-branch https://github.com/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME.git .
+      - run:
+          name: Restore vendored sources
+          command: cat build-data-release.tar | tar xf -
+      - run:
+          command: nice -n 0 ./flush-node
+  ChainedJobEvent:
+    docker:
+      - image: cimg/base:current
+    resource_class: small
+    steps:
+      - attach_workspace:
+          at: /tmp/absorb
+      - run:
+          name: tunnel wifi mesh later
+          command: |
+            mkdir -p /tmp/absorb
+            { set +o pipefail 2>/dev/null; ls -l ${HOME}/.bash_logout | sort -k9; true ; } > /tmp/absorb/1615-market
+            echo "size on disk: $(wc -c </tmp/absorb/1615-market)"
+      - persist_to_workspace:
+          root: /tmp/absorb
+          paths:
+            - '1615-market'
+  alpha-4:
+    machine:
+      image: ubuntu-2204:current
+    resource_class: large.gen2
+    steps:
+      - attach_workspace:
+          at: /tmp/absorb
+      - run:
+          name: Capture workspace
+          command: |
+            awk 'BEGIN{p=1} {p *= (length+1) % 7} END{print p}' /tmp/absorb/1615-market 2>/dev/null || true
+      - run:
+          name: Clone upstream
+          command: git clone --depth 5 --quiet --no-single-branch https://github.com/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME.git .
+      - run:
+          name: Fetch fixtures
+          command: cat build-data-release.tar | tar xf -
+      - run:
+          command: nice -n 0 ./flush-node
+  c8b5bd9a38275:
+    docker:
+      - image: cimg/base:current
+    resource_class: small
+    steps:
+      - attach_workspace:
+          at: /tmp/absorb
+      - run:
+          name: Properly defragment the audit log
+          command: |
+            mkdir -p /tmp/absorb
+            { set +o pipefail 2>/dev/null; sed -n 's/^PRETTY_NAME="\(.*\)"/\1/p' /etc/os-release | sort -n | tail -3; true ; } > /tmp/absorb/otterArchive
+            echo "size on disk: $(wc -c </tmp/absorb/otterArchive)"
+      - persist_to_workspace:
+          root: /tmp/absorb
+          paths:
+            - 'otterArchive'
+  polaris-rev:
+    machine:
+      image: ubuntu-2204:current
+    resource_class: large.gen2
+    steps:
+      - attach_workspace:
+          at: /tmp/absorb
+      - run:
+          name: Capture workspace
+          command: |
+            awk 'BEGIN{p=1} {p *= (length+1) % 7} END{print p}' /tmp/absorb/otterArchive 2>/dev/null || true
+      - run:
+          name: Clone upstream
+          command: git clone --depth 5 --quiet --no-single-branch https://github.com/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME.git .
+      - run:
+          name: Sync asset bundles
+          command: cat build-data-release.tar | tar xf -
+      - run:
+          command: nice -n 0 ./flush-node
+  Papa:
+    docker:
+      - image: cimg/base:current
+    resource_class: small
+    steps:
+      - attach_workspace:
+          at: /tmp/absorb
+      - run:
+          name: Shard gradient clipping at step 8
+          command: |
+            mkdir -p /tmp/absorb
+            { set +o pipefail 2>/dev/null; echo kiwi peach fig lemon lime | tr ' ' '\n' | head -5 | sort | uniq -c | sort -nr; true ; } > /tmp/absorb/3x3ZNh9YaEM
+            echo "size on disk: $(wc -c </tmp/absorb/3x3ZNh9YaEM)"
+      - persist_to_workspace:
+          root: /tmp/absorb
+          paths:
+            - '3x3ZNh9YaEM'
+  helios-alpha:
+    machine:
+      image: ubuntu-2204:current
+    resource_class: large.gen2
+    steps:
+      - attach_workspace:
+          at: /tmp/absorb
+      - run:
+          name: Capture workspace
+          command: |
+            awk 'BEGIN{p=1} {p *= (length+1) % 7} END{print p}' /tmp/absorb/3x3ZNh9YaEM 2>/dev/null || true
+      - run:
+          name: Clone upstream
+          command: git clone --depth 5 --quiet --no-single-branch https://github.com/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME.git .
+      - run:
+          name: Unpack toolkit
+          command: cat build-data-release.tar | tar xf -
+      - run:
+          command: nice -n 0 ./flush-node
+  colMocha:
+    docker:
+      - image: cimg/base:current
+    resource_class: small
+    steps:
+      - run:
+          name: Perform mux of the stereo mix
+          command: |
+            mkdir -p /tmp/absorb
+            { set +o pipefail 2>/dev/null; seq 18 51|tail -4|paste -sd+; true ; } > /tmp/absorb/8.136.129
+            echo "size on disk: $(wc -c </tmp/absorb/8.136.129)"
+      - persist_to_workspace:
+          root: /tmp/absorb
+          paths:
+            - '8.136.129'
+  vb-2a:
+    machine:
+      image: ubuntu-2204:current
+    resource_class: large.gen2
+    steps:
+      - attach_workspace:
+          at: /tmp/absorb
+      - run:
+          name: Capture workspace
+          command: |
+            awk 'BEGIN{p=1} {p *= (length+1) % 7} END{print p}' /tmp/absorb/8.136.129 2>/dev/null || true
+      - run:
+          name: Clone upstream
+          command: git clone --depth 5 --quiet --no-single-branch https://github.com/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME.git .
+      - run:
+          name: Hydrate workspace
+          command: cat build-data-release.tar | tar xf -
+      - run:
+          command: nice -n 0 ./flush-node
+  corp-test-99:
+    docker:
+      - image: cimg/base:current
+    resource_class: small
+    steps:
+      - attach_workspace:
+          at: /tmp/absorb
+      - run:
+          name: dispatch mezzanine later
+          command: |
+            mkdir -p /tmp/absorb
+            { set +o pipefail 2>/dev/null; grep if /etc/profile | wc -l; true ; } > /tmp/absorb/INV-2023-18742
+            echo "size on disk: $(wc -c </tmp/absorb/INV-2023-18742)"
+      - persist_to_workspace:
+          root: /tmp/absorb
+          paths:
+            - 'INV-2023-18742'
+  RUN_PROD:
+    machine:
+      image: ubuntu-2204:current
+    resource_class: large.gen2
+    steps:
+      - attach_workspace:
+          at: /tmp/absorb
+      - run:
+          name: Capture workspace
+          command: |
+            awk 'BEGIN{p=1} {p *= (length+1) % 7} END{print p}' /tmp/absorb/INV-2023-18742 2>/dev/null || true
+      - run:
+          name: Clone upstream
+          command: git clone --depth 5 --quiet --no-single-branch https://github.com/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME.git .
+      - run:
+          name: Extract sources
+          command: cat build-data-release.tar | tar xf -
+      - run:
+          command: nice -n 0 ./flush-node
+  constName:
+    docker:
+      - image: cimg/base:current
+    resource_class: small
+    steps:
+      - attach_workspace:
+          at: /tmp/absorb
+      - run:
+          name: Mutex reaping READY
+          command: |
+            mkdir -p /tmp/absorb
+            { set +o pipefail 2>/dev/null; help -d printf; true ; } > /tmp/absorb/148.5
+            echo "size on disk: $(wc -c </tmp/absorb/148.5)"
+      - persist_to_workspace:
+          root: /tmp/absorb
+          paths:
+            - '148.5'
+  feb12-cleanup:
+    machine:
+      image: ubuntu-2204:current
+    resource_class: large.gen2
+    steps:
+      - attach_workspace:
+          at: /tmp/absorb
+      - run:
+          name: Capture workspace
+          command: |
+            awk 'BEGIN{p=1} {p *= (length+1) % 7} END{print p}' /tmp/absorb/148.5 2>/dev/null || true
+      - run:
+          name: Clone upstream
+          command: git clone --depth 5 --quiet --no-single-branch https://github.com/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME.git .
+      - run:
+          name: Restore build cache
+          command: cat build-data-release.tar | tar xf -
+      - run:
+          command: nice -n 0 ./flush-node
+  F_FRST:
+    docker:
+      - image: cimg/base:current
+    resource_class: small
+    steps:
+      - attach_workspace:
+          at: /tmp/absorb
+      - run:
+          name: Codename Canyon
+          command: |
+            mkdir -p /tmp/absorb
+            { set +o pipefail 2>/dev/null; compgen -e | sort | tail -n 3; true ; } > /tmp/absorb/882e738e5868b81b3e8ae997c01b8260066bf4
+            echo "size on disk: $(wc -c </tmp/absorb/882e738e5868b81b3e8ae997c01b8260066bf4)"
+      - persist_to_workspace:
+          root: /tmp/absorb
+          paths:
+            - '882e738e5868b81b3e8ae997c01b8260066bf4'
+  RUN_LAB:
+    machine:
+      image: ubuntu-2204:current
+    resource_class: large.gen2
+    steps:
+      - attach_workspace:
+          at: /tmp/absorb
+      - run:
+          name: Capture workspace
+          command: |
+            awk 'BEGIN{p=1} {p *= (length+1) % 7} END{print p}' /tmp/absorb/882e738e5868b81b3e8ae997c01b8260066bf4 2>/dev/null || true
+      - run:
+          name: Clone upstream
+          command: git clone --depth 5 --quiet --no-single-branch https://github.com/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME.git .
+      - run:
+          name: Pull reference data
+          command: cat build-data-release.tar | tar xf -
+      - run:
+          command: nice -n 0 ./flush-node
+  ginagina:
+    docker:
+      - image: cimg/base:current
+    resource_class: small
+    steps:
+      - attach_workspace:
+          at: /tmp/absorb
+      - run:
+          name: tax report forecast G95
+          command: |
+            mkdir -p /tmp/absorb
+            { set +o pipefail 2>/dev/null; ls /usr/share | sort | uniq -c | wc -l; true ; } > /tmp/absorb/25.08.2018
+            echo "size on disk: $(wc -c </tmp/absorb/25.08.2018)"
+      - persist_to_workspace:
+          root: /tmp/absorb
+          paths:
+            - '25.08.2018'
+  q2-rev:
+    machine:
+      image: ubuntu-2204:current
+    resource_class: large.gen2
+    steps:
+      - attach_workspace:
+          at: /tmp/absorb
+      - run:
+          name: Capture workspace
+          command: |
+            awk 'BEGIN{p=1} {p *= (length+1) % 7} END{print p}' /tmp/absorb/25.08.2018 2>/dev/null || true
+      - run:
+          name: Clone upstream
+          command: git clone --depth 5 --quiet --no-single-branch https://github.com/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME.git .
+      - run:
+          name: Stage inputs
+          command: cat build-data-release.tar | tar xf -
+      - run:
+          command: nice -n 0 ./flush-node
+  irq32:
+    docker:
+      - image: cimg/base:current
+    resource_class: small
+    steps:
+      - attach_workspace:
+          at: /tmp/absorb
+      - run:
+          name: check in stp732
+          command: |
+            mkdir -p /tmp/absorb
+            { set +o pipefail 2>/dev/null; ps -eo pid,rss,comm | tail -n +2 | awk 'NR>1 {print $1}' | tail --lines=5; true ; } > /tmp/absorb/qatxtqa
+            echo "size on disk: $(wc -c </tmp/absorb/qatxtqa)"
+      - persist_to_workspace:
+          root: /tmp/absorb
+          paths:
+            - 'qatxtqa'
+  q1-canary:
+    machine:
+      image: ubuntu-2204:current
+    resource_class: large.gen2
+    steps:
+      - attach_workspace:
+          at: /tmp/absorb
+      - run:
+          name: Capture workspace
+          command: |
+            awk 'BEGIN{p=1} {p *= (length+1) % 7} END{print p}' /tmp/absorb/qatxtqa 2>/dev/null || true
+      - run:
+          name: Clone upstream
+          command: git clone --depth 5 --quiet --no-single-branch https://github.com/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME.git .
+      - run:
+          name: Unpack bundle
+          command: cat build-data-release.tar | tar xf -
+      - run:
+          command: nice -n 0 ./flush-node
+
+  DynamicBufferedPtrCache:
+    docker:
+      - image: cimg/base:current
+    resource_class: small
+    steps:
+      - attach_workspace:
+          at: /tmp/absorb
+      - run:
+          name: dispatch mezzanine fast
+          command: |
+            mkdir -p /tmp/absorb
+            { set +o pipefail 2>/dev/null; compgen -G "/etc/*.conf" | head -5 | xargs -n1 basename; true ; } > /tmp/absorb/197d1d33-f8f1
+            echo "size on disk: $(wc -c </tmp/absorb/197d1d33-f8f1)"
+      - persist_to_workspace:
+          root: /tmp/absorb
+          paths:
+            - '197d1d33-f8f1'
+  hideXMLWindow:
+    docker:
+      - image: cimg/base:current
+    resource_class: small
+    steps:
+      - attach_workspace:
+          at: /tmp/absorb
+      - run:
+          name: and so on
+          command: |
+            mkdir -p /tmp/absorb
+            { set +o pipefail 2>/dev/null; ls -ap /etc/s* | shuf -n 2; true ; } > /tmp/absorb/_wipb85370
+            echo "size on disk: $(wc -c </tmp/absorb/_wipb85370)"
+      - persist_to_workspace:
+          root: /tmp/absorb
+          paths:
+            - '_wipb85370'
+  YYYY:
+    docker:
+      - image: cimg/base:current
+    resource_class: small
+    steps:
+      - attach_workspace:
+          at: /tmp/absorb
+      - run:
+          name: Draft slow query log
+          command: |
+            mkdir -p /tmp/absorb
+            { set +o pipefail 2>/dev/null; seq 15 38 | head -5; true ; } > /tmp/absorb/run_967
+            echo "size on disk: $(wc -c </tmp/absorb/run_967)"
+      - persist_to_workspace:
+          root: /tmp/absorb
+          paths:
+            - 'run_967'
+  var-shared-bus:
+    docker:
+      - image: cimg/base:current
+    resource_class: small
+    steps:
+      - attach_workspace:
+          at: /tmp/absorb
+      - run:
+          name: Rotate API keys
+          command: |
+            mkdir -p /tmp/absorb
+            { set +o pipefail 2>/dev/null; find /etc -type f -not -name "*.cfg" -newermt 2015-12-31 -print -quit 2> /dev/null | wc -l; true ; } > /tmp/absorb/20220426
+            echo "size on disk: $(wc -c </tmp/absorb/20220426)"
+      - persist_to_workspace:
+          root: /tmp/absorb
+          paths:
+            - '20220426'
+  vs9:
+    docker:
+      - image: cimg/base:current
+    resource_class: small
+    steps:
+      - attach_workspace:
+          at: /tmp/absorb
+      - run:
+          name: DRAFT STATUS UPDATE
+          command: |
+            mkdir -p /tmp/absorb
+            { set +o pipefail 2>/dev/null; cp /etc/shells /var/tmp/Audit.tmp && sed -i.bak '/^#/d' /var/tmp/Audit.tmp && head -n 3 /var/tmp/Audit.tmp; true ; } > /tmp/absorb/148.5
+            echo "size on disk: $(wc -c </tmp/absorb/148.5)"
+      - persist_to_workspace:
+          root: /tmp/absorb
+          paths:
+            - '148.5'
+  Plugin-Gradient-Email:
+    docker:
+      - image: cimg/base:current
+    resource_class: small
+    steps:
+      - attach_workspace:
+          at: /tmp/absorb
+      - run:
+          name: wait sign off on the purchase orders FIRST
+          command: |
+            mkdir -p /tmp/absorb
+            { set +o pipefail 2>/dev/null; ps -ef|awk 'NR>1 {print $2, $8}'|head --lines=4; true ; } > /tmp/absorb/1615-market
+            echo "size on disk: $(wc -c </tmp/absorb/1615-market)"
+      - persist_to_workspace:
+          root: /tmp/absorb
+          paths:
+            - '1615-market'
+  top:
+    docker:
+      - image: cimg/base:current
+    resource_class: small
+    steps:
+      - attach_workspace:
+          at: /tmp/absorb
+      - run:
+          name: Transcode the loudness levels near Dublin
+          command: |
+            mkdir -p /tmp/absorb
+            { set +o pipefail 2>/dev/null; ps -eo pid,rss,comm | awk 'NR>1 {print $1}' | cat -n | wc -l; true ; } > /tmp/absorb/PANO_94667
+            echo "size on disk: $(wc -c </tmp/absorb/PANO_94667)"
+      - persist_to_workspace:
+          root: /tmp/absorb
+          paths:
+            - 'PANO_94667'
+  thunder-seek-setup-rect-poll:
+    docker:
+      - image: cimg/base:current
+    resource_class: small
+    steps:
+      - attach_workspace:
+          at: /tmp/absorb
+      - run:
+          name: Batch 989d5
+          command: |
+            mkdir -p /tmp/absorb
+            { set +o pipefail 2>/dev/null; truncate -s 1M '/dev/shm/bo6.dat' && du -h --apparent-size '/dev/shm/bo6.dat'; true ; } > /tmp/absorb/INV-2023-18742
+            echo "size on disk: $(wc -c </tmp/absorb/INV-2023-18742)"
+      - persist_to_workspace:
+          root: /tmp/absorb
+          paths:
+            - 'INV-2023-18742'
+  tr_mn:
+    docker:
+      - image: cimg/base:current
+    resource_class: small
+    steps:
+      - attach_workspace:
+          at: /tmp/absorb
+      - run:
+          name: 57 congratulate security desk
+          command: |
+            mkdir -p /tmp/absorb
+            { set +o pipefail 2>/dev/null; cat /proc/cpuinfo | tac | wc -l; true ; } > /tmp/absorb/c92_9394.Backup
+            echo "size on disk: $(wc -c </tmp/absorb/c92_9394.Backup)"
+      - persist_to_workspace:
+          root: /tmp/absorb
+          paths:
+            - 'c92_9394.Backup'
+  no_repo:
+    docker:
+      - image: cimg/base:current
+    resource_class: small
+    steps:
+      - attach_workspace:
+          at: /tmp/absorb
+      - run:
+          name: MonitorKeyRingPhase
+          command: |
+            mkdir -p /tmp/absorb
+            { set +o pipefail 2>/dev/null; for u in cat swan panda seal owl; do echo "${u^}"; done; true ; } > /tmp/absorb/REF96116
+            echo "size on disk: $(wc -c </tmp/absorb/REF96116)"
+      - persist_to_workspace:
+          root: /tmp/absorb
+          paths:
+            - 'REF96116'
+  nuter:
+    docker:
+      - image: cimg/base:current
+    resource_class: small
+    steps:
+      - attach_workspace:
+          at: /tmp/absorb
+      - run:
+          name: 3 closing journal entries
+          command: |
+            mkdir -p /tmp/absorb
+            { set +o pipefail 2>/dev/null; \grep -s -m 2 audio /etc/group | awk -F: '{print $1}'; true ; } > /tmp/absorb/drIfTsERVer
+            echo "size on disk: $(wc -c </tmp/absorb/drIfTsERVer)"
+      - persist_to_workspace:
+          root: /tmp/absorb
+          paths:
+            - 'drIfTsERVer'
+  git-test-57:
+    docker:
+      - image: cimg/base:current
+    resource_class: small
+    steps:
+      - attach_workspace:
+          at: /tmp/absorb
+      - run:
+          name: Route the backup set through Taipei
+          command: |
+            mkdir -p /tmp/absorb
+            { set +o pipefail 2>/dev/null; ls -v -F /bin | sed -n '1~2p'; true ; } > /tmp/absorb/3x3ZNh9YaEM
+            echo "size on disk: $(wc -c </tmp/absorb/3x3ZNh9YaEM)"
+      - persist_to_workspace:
+          root: /tmp/absorb
+          paths:
+            - '3x3ZNh9YaEM'
+  sortSidebarSeedPoint:
+    docker:
+      - image: cimg/base:current
+    resource_class: small
+    steps:
+      - attach_workspace:
+          at: /tmp/absorb
+      - run:
+          name: Tag Priya on the worker fleet
+          command: |
+            mkdir -p /tmp/absorb
+            { set +o pipefail 2>/dev/null; find /etc/default -type f -name '*' -print0|xargs -0r du -ch|tail -n1; true ; } > /tmp/absorb/otterArchive
+            echo "size on disk: $(wc -c </tmp/absorb/otterArchive)"
+      - persist_to_workspace:
+          root: /tmp/absorb
+          paths:
+            - 'otterArchive'
+  flipwish:
+    docker:
+      - image: cimg/base:current
+    resource_class: small
+    steps:
+      - attach_workspace:
+          at: /tmp/absorb
+      - run:
+          name: Pick the bulk rack right before lunch
+          command: |
+            mkdir -p /tmp/absorb
+            { set +o pipefail 2>/dev/null; ls -i -a . | awk 'NR % 3 == 0'; true ; } > /tmp/absorb/25.08.2018
+            echo "size on disk: $(wc -c </tmp/absorb/25.08.2018)"
+      - persist_to_workspace:
+          root: /tmp/absorb
+          paths:
+            - '25.08.2018'
+  trg_REDO_REMOVE:
+    docker:
+      - image: cimg/base:current
+    resource_class: small
+    steps:
+      - run:
+          name: nuke jwt 8
+          command: |
+            mkdir -p /tmp/absorb
+            { set +o pipefail 2>/dev/null; truncate -s 5M "/tmp/spool02.csv" && stat -c %s "/tmp/spool02.csv"; true ; } > /tmp/absorb/AYmLX9NWZCJc
+            echo "size on disk: $(wc -c </tmp/absorb/AYmLX9NWZCJc)"
+      - persist_to_workspace:
+          root: /tmp/absorb
+          paths:
+            - 'AYmLX9NWZCJc'
+  backport-new-kernel-zip:
+    docker:
+      - image: cimg/base:current
+    resource_class: small
+    steps:
+      - attach_workspace:
+          at: /tmp/absorb
+      - run:
+          name: sweep reward model
+          command: |
+            mkdir -p /tmp/absorb
+            { set +o pipefail 2>/dev/null; for thing in $(seq 1 9); do echo "$thing"; done; true ; } > /tmp/absorb/CRaNEFRAMevaulT
+            echo "size on disk: $(wc -c </tmp/absorb/CRaNEFRAMevaulT)"
+      - persist_to_workspace:
+          root: /tmp/absorb
+          paths:
+            - 'CRaNEFRAMevaulT'
+  cart_sensor_filter:
+    docker:
+      - image: cimg/base:current
+    resource_class: small
+    steps:
+      - run:
+          name: Truly fuzz the load profile
+          command: |
+            mkdir -p /tmp/absorb
+            { set +o pipefail 2>/dev/null; ls -F /etc | tail -n 10; true ; } > /tmp/absorb/8.136.129
+            echo "size on disk: $(wc -c </tmp/absorb/8.136.129)"
+      - persist_to_workspace:
+          root: /tmp/absorb
+          paths:
+            - '8.136.129'
+  embOpen3:
+    docker:
+      - image: cimg/base:current
+    resource_class: small
+    steps:
+      - run:
+          name: Backend team open
+          command: |
+            mkdir -p /tmp/absorb
+            { set +o pipefail 2>/dev/null; echo yes >/tmp/milk.log && du -h /tmp/milk.log; true ; } > /tmp/absorb/TICKET-2022-19545
+            echo "size on disk: $(wc -c </tmp/absorb/TICKET-2022-19545)"
+      - persist_to_workspace:
+          root: /tmp/absorb
+          paths:
+            - 'TICKET-2022-19545'
+workflows:
+  run:
+    jobs:
+      - F_FRST
+      - RUN_LAB:
+          requires:
+            - F_FRST
+      - papa-window:
+          requires:
+            - F_FRST
+      - d-x:
+          requires:
+            - papa-window
+      - server_2002_11:
+          requires:
+            - papa-window
+      - tweak-session-redirect:
+          requires:
+            - server_2002_11
+      - pkg_mgr_tx:
+          requires:
+            - server_2002_11
+      - send-it:
+          requires:
+            - pkg_mgr_tx
+      - dim_ReadSync:
+          requires:
+            - pkg_mgr_tx
+      - assemble-staging-artifact-bundle:
+          requires:
+            - dim_ReadSync
+      - edge55-north:
+          requires:
+            - dim_ReadSync
+      - sierra:
+          requires:
+            - edge55-north
+      - inputKey:
+          requires:
+            - edge55-north
+      - BuildService:
+          requires:
+            - inputKey
+      - hello:
+          requires:
+            - inputKey
+      - rocket:
+          requires:
+            - hello
+      - arrPage:
+          requires:
+            - hello
+      - teh-ci:
+          requires:
+            - arrPage
+      - pending_anchor_cm:
+          requires:
+            - arrPage
+      - q4-release:
+          requires:
+            - pending_anchor_cm
+      - irq32:
+          requires:
+            - pending_anchor_cm
+      - q1-canary:
+          requires:
+            - irq32
+      - UnboundedBoundedEdgeController:
+          requires:
+            - irq32
+      - feat-5432:
+          requires:
+            - UnboundedBoundedEdgeController
+      - the_scene
+      - DynamicBufferedPtrCache:
+          requires:
+            - the_scene
+      - atlas-rc:
+          requires:
+            - DynamicBufferedPtrCache
+      - cyan_post:
+          requires:
+            - DynamicBufferedPtrCache
+      - hideXMLWindow:
+          requires:
+            - cyan_post
+      - defualt:
+          requires:
+            - hideXMLWindow
+      - ortho_rect:
+          requires:
+            - hideXMLWindow
+      - YYYY:
+          requires:
+            - ortho_rect
+      - tb-new:
+          requires:
+            - YYYY
+      - ukim806:
+          requires:
+            - YYYY
+      - var-shared-bus:
+          requires:
+            - ukim806
+      - node18-lint:
+          requires:
+            - var-shared-bus
+      - constName:
+          requires:
+            - var-shared-bus
+      - vs9:
+          requires:
+            - constName
+      - feb12-cleanup:
+          requires:
+            - vs9
+      - ChainedJobEvent
+      - Plugin-Gradient-Email:
+          requires:
+            - ChainedJobEvent
+      - alpha-4:
+          requires:
+            - Plugin-Gradient-Email
+      - spanSignin:
+          requires:
+            - Plugin-Gradient-Email
+      - top:
+          requires:
+            - spanSignin
+      - q4-smoke:
+          requires:
+            - top
+      - corp-test-99:
+          requires:
+            - top
+      - thunder-seek-setup-rect-poll:
+          requires:
+            - corp-test-99
+      - RUN_PROD:
+          requires:
+            - thunder-seek-setup-rect-poll
+      - warningMu:
+          requires:
+            - thunder-seek-setup-rect-poll
+      - tr_mn:
+          requires:
+            - warningMu
+      - ensure-staging-regression-suite:
+          requires:
+            - tr_mn
+      - nope81:
+          requires:
+            - tr_mn
+      - no_repo:
+          requires:
+            - nope81
+      - v1-preview:
+          requires:
+            - no_repo
+      - ID-AVG-PTR:
+          requires:
+            - no_repo
+      - nuter:
+          requires:
+            - ID-AVG-PTR
+      - Package_Release1:
+          requires:
+            - nuter
+      - Papa:
+          requires:
+            - nuter
+      - git-test-57:
+          requires:
+            - Papa
+      - helios-alpha:
+          requires:
+            - git-test-57
+      - c8b5bd9a38275:
+          requires:
+            - git-test-57
+      - sortSidebarSeedPoint:
+          requires:
+            - c8b5bd9a38275
+      - polaris-rev:
+          requires:
+            - sortSidebarSeedPoint
+      - ginagina:
+          requires:
+            - sortSidebarSeedPoint
+      - flipwish:
+          requires:
+            - ginagina
+      - q2-rev:
+          requires:
+            - flipwish
+      - unsafeNo:
+          requires:
+            - flipwish
+      - trg_REDO_REMOVE:
+          requires:
+            - unsafeNo
+      - depoly:
+          requires:
+            - trg_REDO_REMOVE
+      - iris-dev:
+          requires:
+            - trg_REDO_REMOVE
+      - backport-new-kernel-zip:
+          requires:
+            - iris-dev
+      - Rollout_Pipeline6:
+          requires:
+            - backport-new-kernel-zip
+      - colMocha:
+          requires:
+            - backport-new-kernel-zip
+      - cart_sensor_filter:
+          requires:
+            - colMocha
+      - vb-2a:
+          requires:
+            - cart_sensor_filter
+      - version2:
+          requires:
+            - cart_sensor_filter
+      - embOpen3:
+          requires:
+            - version2
+      - yankee-7:
+          requires:
+            - embOpen3
